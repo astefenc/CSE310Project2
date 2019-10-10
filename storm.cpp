@@ -22,7 +22,6 @@ int main()
         yearCount++;
     }
 
-    storm_event stormEventArrays[numberOfYears]; //create amount of arrays for input given
     int fileLength[numberOfYears];//get the length of each file
     yearCount = 0; //make count 0 again
     while(yearCount<numberOfYears) //while the count is less
@@ -38,7 +37,36 @@ int main()
         }
         yearCount++; //go to next year
     }
-    //storm_event stormEventArrays[numberOfYears]; //create amount of arrays for input given
+    
+    struct storm_event stormEventArray[numberOfYears]; //create amount of arrays for input given
+    yearCount = 0; //make count 0 again
+    while(yearCount<numberOfYears) //while the count is less
+    {
+        string fileName = "details-"+givenYear[yearCount]+".csv"; //set the file name equal to that year
+        ifstream fin(fileName);//open file 
+        string fileInput; //get input
+        getline(fin,fileInput); //skip the first line
+        while(! fin.eof()) //read the input
+        {
+            fin>>stormEventArray[yearCount].event_id;
+            fin>>stormEventArray[yearCount].state;
+            fin>>stormEventArray[yearCount].year;
+            fin>>stormEventArray[yearCount].month_name;
+            fin>>stormEventArray[yearCount].event_type;
+            fin>>stormEventArray[yearCount].cz_type;
+            fin>>stormEventArray[yearCount].cz_name;
+            fin>>stormEventArray[yearCount].injuries_direct;
+            fin>>stormEventArray[yearCount].injuries_indirect;
+            fin>>stormEventArray[yearCount].deaths_direct;
+            fin>>stormEventArray[yearCount].deaths_indirect;
+            fin>>stormEventArray[yearCount].damage_property;
+            fin>>stormEventArray[yearCount].damage_crops;
+            fin>>stormEventArray[yearCount].tor_f_scale;
+        }
+        yearCount++; //go to next year
+    }
+
+    cout<<stormEventArray[0].state[0]<<endl;
 
     
     
