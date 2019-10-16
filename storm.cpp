@@ -37,36 +37,71 @@ int main()
         }
         yearCount++; //go to next year
     }
-    
-    struct storm_event stormEventArray[numberOfYears]; //create amount of arrays for input given
-    yearCount = 0; //make count 0 again
-    while(yearCount<numberOfYears) //while the count is less
+
+    //convert the value of year to int
+    yearCount = 0;
+    int yearAsInt[numberOfYears];
+    while(yearCount<numberOfYears)
     {
+        yearAsInt[yearCount] = stoi(givenYear[yearCount]);
+        yearCount++;
+    }
+
+    struct annual_storms yearToStruct[numberOfYears]; //creating amount of annual storms for amount of years
+    
+    yearCount = 0; //set count to zero
+    while(yearCount<numberOfYears)
+    {
+        struct annual_storms newYear; //create an annual storm
+        newYear.year=0; //set it to zero 
+        newYear.events = NULL; //
+
+        newYear.year = yearAsInt[yearCount];
+    
+        struct storm_event stormEventArray[fileLength[yearCount]];
         string fileName = "details-"+givenYear[yearCount]+".csv"; //set the file name equal to that year
         ifstream fin(fileName);//open file 
         string fileInput; //get input
+        int lineCounter = 0;
+        string comma = ""; //to skip the commas
         getline(fin,fileInput); //skip the first line
-        while(! fin.eof()) //read the input
+        while(getline(fin,fileInput)) //read the input
         {
-            fin>>stormEventArray[yearCount].event_id;
-            fin>>stormEventArray[yearCount].state;
-            fin>>stormEventArray[yearCount].year;
-            fin>>stormEventArray[yearCount].month_name;
-            fin>>stormEventArray[yearCount].event_type;
-            fin>>stormEventArray[yearCount].cz_type;
-            fin>>stormEventArray[yearCount].cz_name;
-            fin>>stormEventArray[yearCount].injuries_direct;
-            fin>>stormEventArray[yearCount].injuries_indirect;
-            fin>>stormEventArray[yearCount].deaths_direct;
-            fin>>stormEventArray[yearCount].deaths_indirect;
-            fin>>stormEventArray[yearCount].damage_property;
-            fin>>stormEventArray[yearCount].damage_crops;
-            fin>>stormEventArray[yearCount].tor_f_scale;
+            struct storm_event newEvent;
+            fin>>newEvent.event_id;
+            fin>>comma;
+            fin>>newEvent.state;
+            fin>>comma;
+            fin>>newEvent.year;
+            fin>>comma;
+            fin>>newEvent.month_name;
+            fin>>comma;
+            fin>>newEvent.event_type;
+            fin>>comma;
+            fin>>newEvent.cz_type;
+            fin>>comma;
+            fin>>newEvent.cz_name;
+            fin>>comma;
+            fin>>newEvent.injuries_direct;
+            fin>>comma;
+            fin>>newEvent.injuries_indirect;
+            fin>>comma;
+            fin>>newEvent.damage_property;
+            fin>>comma;
+            fin>>newEvent.damage_crops;
+            fin>>comma;
+            fin>>newEvent.tor_f_scale;
+            newEvent.f=NULL; //setting linked list to null
+            stormEventArray[lineCounter] = newEvent;
         }
+        
+        newYear.events = stormEventArray;
+        yearToStruct[yearCount] = newYear;
         yearCount++; //go to next year
     }
 
-    cout<<stormEventArray[0].state[0]<<endl;
+    
+
 
     
     
