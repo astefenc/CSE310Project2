@@ -6,6 +6,8 @@
 #include <string.h>
 #include "defn.h"
 #include <fstream>
+#include <sstream>
+#include <string>
 using namespace std;
 
 int main()
@@ -38,6 +40,7 @@ int main()
         yearCount++; //go to next year
     }
 
+
     //convert the value of year to int
     yearCount = 0;
     int yearAsInt[numberOfYears];
@@ -48,15 +51,16 @@ int main()
     }
 
     struct annual_storms yearToStruct[numberOfYears]; //creating amount of annual storms for amount of years
-    
+
     yearCount = 0; //set count to zero
     while(yearCount<numberOfYears)
     {
-        struct annual_storms newYear; //create an annual storm
-        newYear.year=0; //set it to zero 
-        newYear.events = NULL; //
+        //struct annual_storms newYear; //create an annual storm
 
-        newYear.year = yearAsInt[yearCount];
+        yearToStruct[yearCount].year=0; //set it to zero 
+        yearToStruct[yearCount].events = NULL; //
+
+        yearToStruct[yearCount].year = yearAsInt[yearCount];
     
         struct storm_event stormEventArray[fileLength[yearCount]];
         string fileName = "details-"+givenYear[yearCount]+".csv"; //set the file name equal to that year
@@ -64,42 +68,44 @@ int main()
         string fileInput; //get input
         int lineCounter = 0;
         string comma = ""; //to skip the commas
-        getline(fin,fileInput); //skip the first line
+        
         while(getline(fin,fileInput)) //read the input
         {
-            struct storm_event newEvent;
-            fin>>newEvent.event_id;
-            fin>>comma;
-            fin>>newEvent.state;
-            fin>>comma;
-            fin>>newEvent.year;
-            fin>>comma;
-            fin>>newEvent.month_name;
-            fin>>comma;
-            fin>>newEvent.event_type;
-            fin>>comma;
-            fin>>newEvent.cz_type;
-            fin>>comma;
-            fin>>newEvent.cz_name;
-            fin>>comma;
-            fin>>newEvent.injuries_direct;
-            fin>>comma;
-            fin>>newEvent.injuries_indirect;
-            fin>>comma;
-            fin>>newEvent.damage_property;
-            fin>>comma;
-            fin>>newEvent.damage_crops;
-            fin>>comma;
-            fin>>newEvent.tor_f_scale;
-            newEvent.f=NULL; //setting linked list to null
-            stormEventArray[lineCounter] = newEvent;
+            if(lineCounter==0)
+            {
+                lineCounter++;
+
+            }
+            else
+            {
+                stringstream stringstr(fileInput);
+                string tempA[14];
+                string tempS="";
+
+                for(int i=0;i<14;i++)
+                {
+                    getline(stringstr,tempS,',');
+
+                    tempA[i]=tempS;
+                }
+                
+                int num;
+                istringstream iss (tempA[0]);
+                iss >> num;
+                stormEventArray[lineCounter-1].event_id = num;
+                strcpy(stormEventArray[lineCounter-1].state,tempA[1].c_str());
+                cout<<stormEventArray[lineCounter-1].event_id<<" "<<stormEventArray[lineCounter-1].state<<endl;
+                lineCounter++;
+            }
+           
+
         }
-        
-        newYear.events = stormEventArray;
-        yearToStruct[yearCount] = newYear;
+        yearToStruct[yearCount].events = stormEventArray;
+        //yearToStruct[yearCount] = newYear;
         yearCount++; //go to next year
     }
-
+    
+    
     
 
 
