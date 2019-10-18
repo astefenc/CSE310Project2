@@ -8,7 +8,11 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include "prime.cc"
 using namespace std;
+
+bool isPrime(int filesSize);
+int findPrime(int sizeHash);
 
 int main()
 {
@@ -22,6 +26,7 @@ int main()
     {
         cin>>givenYear[yearCount];
         yearCount++;
+        
     }
 
     int fileLength[numberOfYears];//get the length of each file
@@ -93,28 +98,108 @@ int main()
                 istringstream iss (tempA[0]);
                 iss >> num;
                 stormEventArray[lineCounter-1].event_id = num;
+                
                 strcpy(stormEventArray[lineCounter-1].state,tempA[1].c_str());
-                cout<<stormEventArray[lineCounter-1].event_id<<" "<<stormEventArray[lineCounter-1].state<<endl;
+                //cout<<stormEventArray[lineCounter-1].event_id<<" "<<stormEventArray[lineCounter-1].state<<endl;
+
+                int yearNum;
+                istringstream iss2 (tempA[2]);
+                iss2 >> yearNum;
+                stormEventArray[lineCounter-1].year = yearNum;
+                //cout<<stormEventArray[lineCounter-1].year<<endl;
+
+                strcpy(stormEventArray[lineCounter-1].month_name,tempA[3].c_str());
+                //cout<<stormEventArray[lineCounter-1].month_name<<endl;
+
+                strcpy(stormEventArray[lineCounter-1].event_type,tempA[4].c_str());
+                //cout<<stormEventArray[lineCounter-1].event_type<<endl;
+
+                char czType = tempA[5][0];
+                stormEventArray[lineCounter-1].cz_type = czType;
+                //cout<<stormEventArray[lineCounter-1].cz_type<<endl;
+
+                strcpy(stormEventArray[lineCounter-1].cz_name,tempA[6].c_str());
+                //cout<<stormEventArray[lineCounter-1].cz_type<<" "<<stormEventArray[lineCounter-1].cz_name<<endl;
+
+                int injDirect;
+                istringstream issD (tempA[7]);
+                issD >> injDirect;
+                stormEventArray[lineCounter-1].injuries_direct = injDirect;
+                //cout<<stormEventArray[lineCounter-1].injuries_direct<<endl;
+
+                int injInDirect;
+                istringstream issI (tempA[8]);
+                issI >> injInDirect;
+                stormEventArray[lineCounter-1].injuries_indirect = injInDirect;
+                //cout<<stormEventArray[lineCounter-1].injuries_indirect<<endl;
+
+                int deathD;
+                istringstream issDeath (tempA[9]);
+                issDeath >> deathD;
+                stormEventArray[lineCounter-1].deaths_direct = deathD;
+                //cout<<stormEventArray[lineCounter-1].deaths_direct<<endl;
+
+                int deathIn;
+                istringstream issInDeath (tempA[10]);
+                issInDeath >> deathIn;
+                stormEventArray[lineCounter-1].deaths_indirect = deathIn;
+                //cout<<stormEventArray[lineCounter-1].deaths_indirect<<endl;
+
+                int propDamage;
+                istringstream issDamage (tempA[11]);
+                issDamage >> propDamage;
+                stormEventArray[lineCounter-1].damage_property = propDamage;
+
+                int cropDamage;
+                istringstream issCrop (tempA[12]);
+                issCrop >> cropDamage;
+                stormEventArray[lineCounter-1].damage_property = cropDamage;
+
+                strcpy(stormEventArray[lineCounter-1].tor_f_scale,tempA[13].c_str());
+                //cout<<stormEventArray[lineCounter-1].tor_f_scale<<endl;
+
+                stormEventArray[lineCounter-1].f = NULL;
                 lineCounter++;
             }
-           
-
         }
         yearToStruct[yearCount].events = stormEventArray;
-        //yearToStruct[yearCount] = newYear;
         yearCount++; //go to next year
     }
     
+    //create hash table size
+    int sizeHash;
+    yearCount = 0;
+    while(yearCount<numberOfYears)
+    {
+        sizeHash = sizeHash + fileLength[yearCount];
+        yearCount++;
+    }
     
+    sizeHash = findPrime(sizeHash);
+    //cout<<sizeHash;
+
+    //creating hash
+    hash_table_entry *hashPtr[sizeHash];
+    for(int pos=0;pos<sizeHash;pos++)
+    {
+        hashPtr[pos] = NULL;
+    }
+
     
 
 
-    
-    
-    
-    
-    
-    
-    
+
+}
+
+int findPrime(int hashSize)
+{
+    hashSize = 2 * hashSize;
+    bool isPrime = false;
+    while(isPrime !=  true)
+    {
+        hashSize++;
+        isPrime = TestForPrime(hashSize);
+    }
+    return hashSize;
 
 }
