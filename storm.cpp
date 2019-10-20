@@ -13,6 +13,7 @@ using namespace std;
 
 bool isPrime(int filesSize);
 int findPrime(int sizeHash);
+int hashFunction(int key,int hashsize);
 
 int main()
 {
@@ -175,20 +176,24 @@ int main()
         yearCount++;
     }
     
-    sizeHash = findPrime(sizeHash);
+    int sizeHashPrime = findPrime(sizeHash);
     //cout<<sizeHash;
 
     //creating hash
-    hash_table_entry *hashPtr[sizeHash];
-    for(int pos=0;pos<sizeHash;pos++)
+    hash_table_entry *hashPtr[sizeHashPrime];
+    for(int pos=0;pos<sizeHashPrime;pos++)
     {
         hashPtr[pos] = NULL;
     }
 
+    //fatalities
+    yearCount=0;
     
-
-
-
+    
+}
+int hashFunction(int key,int hashsize)
+{
+    return key % hashsize;
 }
 
 int findPrime(int hashSize)
