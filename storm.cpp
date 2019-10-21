@@ -14,6 +14,7 @@ using namespace std;
 bool isPrime(int filesSize);
 int findPrime(int sizeHash);
 int hashFunction(int key,int hashsize);
+void insertKey(struct hash_table_entry **T,int k,int hashLength);
 
 int main()
 {
@@ -46,7 +47,7 @@ int main()
         yearCount++; //go to next year
     }
 
-
+    //cout<<fileLength[0]<<endl;
     //convert the value of year to int
     yearCount = 0;
     int yearAsInt[numberOfYears];
@@ -56,6 +57,34 @@ int main()
         yearCount++;
     }
 
+    
+    
+    //create hash table size
+    int sizeHash;
+    yearCount = 0;
+    while(yearCount<numberOfYears)
+    {
+        sizeHash = sizeHash + fileLength[yearCount];
+        yearCount++;
+    }
+    
+    int sizeHashPrime = findPrime(sizeHash);
+    int testcount;
+
+    //creating hash
+    hash_table_entry *hashPtr[sizeHashPrime];
+    for(int pos=0;pos<sizeHashPrime;pos++)
+    {   
+        hashPtr[pos] = NULL;
+        // hashPtr[pos].event_id = NULL;
+        // hashPtr[pos].event_index = NULL;
+        // hashPtr[pos].year = NULL;
+
+    }
+   
+    
+    
+    
     struct annual_storms yearToStruct[numberOfYears]; //creating amount of annual storms for amount of years
 
     yearCount = 0; //set count to zero
@@ -73,7 +102,6 @@ int main()
         ifstream fin(fileName);//open file 
         string fileInput; //get input
         int lineCounter = 0;
-        string comma = ""; //to skip the commas
         
         while(getline(fin,fileInput)) //read the input
         {
@@ -161,36 +189,139 @@ int main()
 
                 stormEventArray[lineCounter-1].f = NULL;
                 lineCounter++;
+
+                //hashing
+                struct hash_table_entry *newEntry = new hash_table_entry;
+                newEntry->event_id=num;
+                newEntry->year=yearNum;
+                newEntry->event_index=hashFunction(num,sizeHashPrime);
+                cout<<newEntry->event_id<<endl;
+                struct hash_table_entry **toInsert = &newEntry;
+                //insertKey(toInsert,num,sizeHashPrime);
+
+
             }
         }
         yearToStruct[yearCount].events = stormEventArray;
         yearCount++; //go to next year
     }
     
-    //create hash table size
-    int sizeHash;
-    yearCount = 0;
+    
+    
+    // int hashCounter=0;
+    // yearCount=0;
+    // int linesCounter;
+    // while(yearCount<numberOfYears)
+    // {
+    //     linesCounter=0;
+    //     while(linesCounter<fileLength[yearCount])
+    //     {
+    //         struct hash_table_entry **newEntry;
+    //         int eventID = yearToStruct[yearCount].events[linesCounter].event_id;
+    //         //newEntry = eventID;
+    //         //newEntry->year=yearToStruct[yearCount].year;
+    //         int hashEvent = hashFunction(eventID,sizeHashPrime);
+    //         //insertKey(newEntry,hashEvent,sizeHashPrime);
+    //         //cout<<newEntry.event_id<<endl;
+    //         linesCounter++;
+    //         //hashCounter++;
+            
+    //     }
+    //     yearCount++;
+    // }
+
+
+
+
+    //fatalities length
+    yearCount=0;
+    int fileLengthFatal[numberOfYears];
     while(yearCount<numberOfYears)
     {
-        sizeHash = sizeHash + fileLength[yearCount];
-        yearCount++;
-    }
-    
-    int sizeHashPrime = findPrime(sizeHash);
-    //cout<<sizeHash;
-
-    //creating hash
-    hash_table_entry *hashPtr[sizeHashPrime];
-    for(int pos=0;pos<sizeHashPrime;pos++)
-    {
-        hashPtr[pos] = NULL;
+        string fileName = "fatalities-"+givenYear[yearCount]+".csv"; //set the file name equal to that year
+        ifstream fin(fileName);//open file 
+        string fileInput; //get input
+        fileLengthFatal[yearCount] = 0; //set the file length equal to zero
+        getline(fin,fileInput); //skip the first line
+        while(getline(fin,fileInput)) //read the input
+        {
+            fileLengthFatal[yearCount]++; //increment the length
+        }
+        yearCount++; //go to next year
     }
 
-    //fatalities
+    //fatalities length
     yearCount=0;
-    
-    
+    while(yearCount<numberOfYears)
+    {
+        string fileName = "fatalities-"+givenYear[yearCount]+".csv"; //set the file name equal to that year
+        ifstream fin(fileName);//open file 
+        string fileInput; //get input
+        int fatalFileCount = 0;
+        struct fatality_event fatalEventArray[fileLengthFatal[yearCount]];
+        getline(fin,fileInput); //skip the first line
+        while(getline(fin,fileInput)) //read the input
+        {
+            stringstream readLine(fileInput);
+            string fatalEvents[7];
+            string readIn = "";
+            for(int i=0;i<7;i++)
+            {
+                getline(readLine,readIn,',');
+                fatalEvents[i] = readIn;
+            }
+            
+            fatalEventArray[fatalFileCount].fatality_id = stoi(fatalEvents[0]);
+            //cout<<fatalEventArray[fatalFileCount].fatality_id<<endl;
+
+            fatalEventArray[fatalFileCount].event_id = stoi(fatalEvents[1]);
+            //cout<<fatalEventArray[fatalFileCount].event_id<<endl;
+
+            char fType;
+            istringstream fChar(fatalEvents[2]);
+            fChar >> fType;
+            fatalEventArray[fatalFileCount].fatality_type = fType;
+            //cout<<fatalEventArray[fatalFileCount].fatality_type<<endl;
+
+            char fDate;
+            istringstream fCharDate(fatalEvents[3]);
+            fCharDate >> fDate;
+            strcpy(fatalEventArray[fatalFileCount].fatality_date,fatalEvents[3].c_str());   
+            //cout<<fatalEventArray[fatalFileCount].fatality_date<<endl;
+
+            //cout<<fatalEvents[4]<<endl;
+            int fAge;
+            istringstream fIntAge(fatalEvents[4]);
+            fIntAge >> fAge;
+            fatalEventArray[fatalFileCount].fatality_age = fAge;
+            //cout<<fatalEventArray[fatalFileCount].fatality_age<<endl;
+
+
+            fatalFileCount++;
+        }
+        yearCount++; //go to next year
+    }
+
+ 
 }
+void insertKey(struct hash_table_entry **T,int k,int hashLength)
+{
+    struct hash_table_entry *newNode = new struct hash_table_entry;
+    newNode->event_id = k;
+
+    int hashIndex = hashFunction(k,hashLength);
+    struct hash_table_entry *head = T[hashIndex];
+    if(head == NULL)
+    {
+        newNode->next=NULL;
+    }
+    else
+    {
+        newNode->next=head;
+    }
+    T[hashIndex] = newNode;
+}
+
 int hashFunction(int key,int hashsize)
 {
     return key % hashsize;
@@ -208,3 +339,26 @@ int findPrime(int hashSize)
     return hashSize;
 
 }
+
+// int findEvent(struct hash_table_entry **T,int eventID,int hashSize)
+// {
+//     bool foundKey = false;
+//     int hashIndex = hashFunction(eventID,hashSize);
+//     struct hash_table_entry *currentPtr;
+//     currentPtr = T[hashIndex];
+//     while(currentPtr != NULL && !foundKey)
+//     {
+//         if(currentPtr->event_id==eventID)
+//         {
+//             foundKey=true;
+
+//         }
+//         else
+//         {
+//             currentPtr = currentPtr->next;
+//         }
+        
+//     }
+
+    
+// }
