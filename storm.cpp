@@ -31,6 +31,8 @@ int main()
         
     }
 
+
+    int sizeOfHash;
     int fileLength[numberOfYears];//get the length of each file
     yearCount = 0; //make count 0 again
     while(yearCount<numberOfYears) //while the count is less
@@ -43,11 +45,13 @@ int main()
         while(getline(fin,fileInput)) //read the input
         {
             fileLength[yearCount]++; //increment the length
+            sizeOfHash++;
         }
+        
         yearCount++; //go to next year
     }
 
-    //cout<<fileLength[0]<<endl;
+    
     //convert the value of year to int
     yearCount = 0;
     int yearAsInt[numberOfYears];
@@ -58,30 +62,14 @@ int main()
     }
 
     
-    
-    //create hash table size
-    int sizeHash;
-    yearCount = 0;
-    while(yearCount<numberOfYears)
-    {
-        sizeHash = sizeHash + fileLength[yearCount];
-        yearCount++;
-    }
-    
-    int sizeHashPrime = findPrime(sizeHash);
-    int testcount;
-
+    int sizeHashPrime = findPrime(sizeOfHash*2);
     //creating hash
-    
     struct hash_table_entry *hashPtr[sizeHashPrime];
     for(int pos=0;pos<sizeHashPrime;pos++)
     {   
         hashPtr[pos] = NULL;
     }
    
-    
-    
-    
     struct annual_storms yearToStruct[numberOfYears]; //creating amount of annual storms for amount of years
 
     int hashPosition = 0;
@@ -127,50 +115,40 @@ int main()
                 stormEventArray[lineCounter-1].event_id = num;
                 
                 strcpy(stormEventArray[lineCounter-1].state,tempA[1].c_str());
-                //cout<<stormEventArray[lineCounter-1].event_id<<" "<<stormEventArray[lineCounter-1].state<<endl;
 
                 int yearNum;
                 istringstream iss2 (tempA[2]);
                 iss2 >> yearNum;
                 stormEventArray[lineCounter-1].year = yearNum;
-                //cout<<stormEventArray[lineCounter-1].year<<endl;
 
                 strcpy(stormEventArray[lineCounter-1].month_name,tempA[3].c_str());
-                //cout<<stormEventArray[lineCounter-1].month_name<<endl;
 
                 strcpy(stormEventArray[lineCounter-1].event_type,tempA[4].c_str());
-                //cout<<stormEventArray[lineCounter-1].event_type<<endl;
 
                 char czType = tempA[5][0];
                 stormEventArray[lineCounter-1].cz_type = czType;
-                //cout<<stormEventArray[lineCounter-1].cz_type<<endl;
 
                 strcpy(stormEventArray[lineCounter-1].cz_name,tempA[6].c_str());
-                //cout<<stormEventArray[lineCounter-1].cz_type<<" "<<stormEventArray[lineCounter-1].cz_name<<endl;
 
                 int injDirect;
                 istringstream issD (tempA[7]);
                 issD >> injDirect;
                 stormEventArray[lineCounter-1].injuries_direct = injDirect;
-                //cout<<stormEventArray[lineCounter-1].injuries_direct<<endl;
 
                 int injInDirect;
                 istringstream issI (tempA[8]);
                 issI >> injInDirect;
                 stormEventArray[lineCounter-1].injuries_indirect = injInDirect;
-                //cout<<stormEventArray[lineCounter-1].injuries_indirect<<endl;
 
                 int deathD;
                 istringstream issDeath (tempA[9]);
                 issDeath >> deathD;
                 stormEventArray[lineCounter-1].deaths_direct = deathD;
-                //cout<<stormEventArray[lineCounter-1].deaths_direct<<endl;
 
                 int deathIn;
                 istringstream issInDeath (tempA[10]);
                 issInDeath >> deathIn;
                 stormEventArray[lineCounter-1].deaths_indirect = deathIn;
-                //cout<<stormEventArray[lineCounter-1].deaths_indirect<<endl;
 
                 int propDamage;
                 istringstream issDamage (tempA[11]);
@@ -183,24 +161,31 @@ int main()
                 stormEventArray[lineCounter-1].damage_property = cropDamage;
 
                 strcpy(stormEventArray[lineCounter-1].tor_f_scale,tempA[13].c_str());
-                //cout<<stormEventArray[lineCounter-1].tor_f_scale<<endl;
 
                 stormEventArray[lineCounter-1].f = NULL;
                 lineCounter++;
 
                 //hashing
-                // struct hash_table_entry *newEntry = new hash_table_entry;
-                // newEntry->event_id=num;
-                // newEntry->year=yearNum;
-                // newEntry->event_index=hashFunction(num,sizeHashPrime);
-                // hashPtr[hashPosition]->event_id=num;
-                // cout<<hashPtr[hashPosition]<<endl;
-                // hashPosition++;
-                //cout<<newEntry->event_id<<endl;
-                //struct hash_table_entry **toInsert = &newEntry;
-                //insertKey(toInsert,num,sizeHashPrime);
+                struct hash_table_entry *newEntry = new hash_table_entry;
+                newEntry->event_id=num;
+                int hashIndex = hashFunction(num,sizeHashPrime);
+                newEntry->year=yearNum;
+                newEntry->event_index=hashIndex;
 
+                struct hash_table_entry *head = hashPtr[hashIndex];
+                if(head == NULL)
+                {
+                    newEntry->next=NULL;
+                }
+                else
+                {
+                    newEntry->next=head;
+                }
+                hashPtr[hashIndex] = newEntry;
 
+                
+
+                
             }
         }
         yearToStruct[yearCount].events = stormEventArray;
@@ -301,41 +286,18 @@ void insertKey(struct hash_table_entry **T,int k,int hashLength)
 
 int hashFunction(int key,int hashsize)
 {
-    return key % hashsize;
+    int hashed  = key % hashsize;
+    return hashed;
 }
 
 int findPrime(int hashSize)
 {
-    hashSize = 2 * hashSize;
     bool isPrime = false;
-    while(isPrime !=  true)
+    while(isPrime != true)
     {
         hashSize++;
+
         isPrime = TestForPrime(hashSize);
     }
     return hashSize;
-
 }
-
-// int findEvent(struct hash_table_entry **T,int eventID,int hashSize)
-// {
-//     bool foundKey = false;
-//     int hashIndex = hashFunction(eventID,hashSize);
-//     struct hash_table_entry *currentPtr;
-//     currentPtr = T[hashIndex];
-//     while(currentPtr != NULL && !foundKey)
-//     {
-//         if(currentPtr->event_id==eventID)
-//         {
-//             foundKey=true;
-
-//         }
-//         else
-//         {
-//             currentPtr = currentPtr->next;
-//         }
-        
-//     }
-
-    
-// }
