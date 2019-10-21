@@ -72,14 +72,11 @@ int main()
     int testcount;
 
     //creating hash
-    hash_table_entry *hashPtr[sizeHashPrime];
+    
+    struct hash_table_entry *hashPtr[sizeHashPrime];
     for(int pos=0;pos<sizeHashPrime;pos++)
     {   
         hashPtr[pos] = NULL;
-        // hashPtr[pos].event_id = NULL;
-        // hashPtr[pos].event_index = NULL;
-        // hashPtr[pos].year = NULL;
-
     }
    
     
@@ -87,6 +84,7 @@ int main()
     
     struct annual_storms yearToStruct[numberOfYears]; //creating amount of annual storms for amount of years
 
+    int hashPosition = 0;
     yearCount = 0; //set count to zero
     while(yearCount<numberOfYears)
     {
@@ -191,12 +189,15 @@ int main()
                 lineCounter++;
 
                 //hashing
-                struct hash_table_entry *newEntry = new hash_table_entry;
-                newEntry->event_id=num;
-                newEntry->year=yearNum;
-                newEntry->event_index=hashFunction(num,sizeHashPrime);
-                cout<<newEntry->event_id<<endl;
-                struct hash_table_entry **toInsert = &newEntry;
+                // struct hash_table_entry *newEntry = new hash_table_entry;
+                // newEntry->event_id=num;
+                // newEntry->year=yearNum;
+                // newEntry->event_index=hashFunction(num,sizeHashPrime);
+                // hashPtr[hashPosition]->event_id=num;
+                // cout<<hashPtr[hashPosition]<<endl;
+                // hashPosition++;
+                //cout<<newEntry->event_id<<endl;
+                //struct hash_table_entry **toInsert = &newEntry;
                 //insertKey(toInsert,num,sizeHashPrime);
 
 
@@ -207,31 +208,7 @@ int main()
     }
     
     
-    
-    // int hashCounter=0;
-    // yearCount=0;
-    // int linesCounter;
-    // while(yearCount<numberOfYears)
-    // {
-    //     linesCounter=0;
-    //     while(linesCounter<fileLength[yearCount])
-    //     {
-    //         struct hash_table_entry **newEntry;
-    //         int eventID = yearToStruct[yearCount].events[linesCounter].event_id;
-    //         //newEntry = eventID;
-    //         //newEntry->year=yearToStruct[yearCount].year;
-    //         int hashEvent = hashFunction(eventID,sizeHashPrime);
-    //         //insertKey(newEntry,hashEvent,sizeHashPrime);
-    //         //cout<<newEntry.event_id<<endl;
-    //         linesCounter++;
-    //         //hashCounter++;
-            
-    //     }
-    //     yearCount++;
-    // }
-
-
-
+ 
 
     //fatalities length
     yearCount=0;
